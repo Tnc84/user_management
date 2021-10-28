@@ -1,12 +1,17 @@
-package com.tnc.userManagement.entities;
+package com.tnc.userManagement.repository.entity;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Entity
 public class User {
 
@@ -29,7 +34,8 @@ public class User {
                     referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "userRole_id",
                     referencedColumnName = "id"))
-    private Set<UserRole> roles;
+    private Set<UserRole> roles = new HashSet<>();
+//    private String roles; ???????????????
     @Transient
     private String[] authorities;
     private boolean isActive;
