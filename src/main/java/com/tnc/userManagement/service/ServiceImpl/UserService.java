@@ -4,19 +4,19 @@ import com.tnc.userManagement.repository.UserRepository;
 import com.tnc.userManagement.service.IUserService;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserService implements IUserService {
 
-    private UserRepository userRepository;
-    private UserDomainMapper userDomainMapper;
+    private final UserRepository userRepository;
+    private final UserDomainMapper userDomainMapper;
 
     @Override
     public UserDomain login(UserDomain userDomain) {
@@ -55,6 +55,6 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDomain> getAll() {
-        return null;
+        return userDomainMapper.toDomainList(userRepository.findAll());
     }
 }
