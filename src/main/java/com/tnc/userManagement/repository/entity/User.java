@@ -5,15 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
-@Entity
-public class User {
+@Entity(name = "users")
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,21 +20,14 @@ public class User {
     private String userId;
     private String firstName;
     private String lastName;
-    private String username;
     private String email;
     private String phone;
     private String password;
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id",
-                    referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "userRole_id",
-                    referencedColumnName = "id"))
-    private Set<UserRole> roles = new HashSet<>();
-//    private String roles; ???????????????
+    @Enumerated(EnumType.STRING)
+    private RoleEnum role;
     @Transient
     private String[] authorities;
     private boolean isActive;

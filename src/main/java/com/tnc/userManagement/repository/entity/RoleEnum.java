@@ -2,7 +2,7 @@ package com.tnc.userManagement.repository.entity;
 
 import lombok.Getter;
 
-import static com.tnc.userManagement.repository.entity.AuthorityEnum.*;
+import static com.tnc.userManagement.repository.entity.AuthorityConstant.*;
 
 public enum RoleEnum {
 

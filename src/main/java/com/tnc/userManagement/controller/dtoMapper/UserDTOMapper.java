@@ -11,6 +11,9 @@ public interface UserDTOMapper {
     UserDTO toDTO(UserDomain userDomain);
 
     UserDomain toDomain(UserDTO userDTO);
+
     List<UserDomain> toDomainList(List<UserDTO> userDTOList);
+
     List<UserDTO> toDTOList(List<UserDomain> userDomainList);
+
 }

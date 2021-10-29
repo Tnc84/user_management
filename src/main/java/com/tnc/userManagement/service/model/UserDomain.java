@@ -14,14 +14,13 @@ public class UserDomain {
     private String userId;
     private String firstName;
     private String lastName;
-    private String username;
     private String email;
     private String phone;
     private String password;
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
-    private String roles;
+    private String role;
     private String[] authorities;
     private boolean isActive;
     private boolean isNotLocked;

@@ -1,6 +1,6 @@
 package com.tnc.userManagement.repository.entity;
 
-public class AuthorityEnum {
+public class AuthorityConstant {
     public static final String[] USER_AUTHORITIES = {"user:read"};
     public static final String[] ADMIN_AUTHORITIES = {"user:read", "user:write"};
     public static final String[] MANAGER_AUTHORITIES = {"user:read", "user:write", "user:update"};
