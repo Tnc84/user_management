@@ -5,7 +5,6 @@ import com.tnc.userManagement.service.model.UserDomain;
 import org.mapstruct.Mapper;
 
 import java.util.List;
-import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface UserDomainMapper {
@@ -17,9 +16,5 @@ public interface UserDomainMapper {
     List<User> toEntityList(List<UserDomain> userDomainList);
 
     List<UserDomain> toDomainList(List<User> userList);
-
-//    Set<Role> toRole(String value);
-//
-//    String toSetOfRoles(Set<Role> value);
 
 }
