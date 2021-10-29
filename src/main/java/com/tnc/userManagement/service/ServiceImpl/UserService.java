@@ -11,6 +11,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,6 +24,8 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final UserDomainMapper userDomainMapper;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     public UserDomain login(UserDomain userDomain) {
@@ -34,7 +37,7 @@ public class UserService implements IUserService {
         var userDomain = new UserDomain();
         userDomain.setUserId(generateUserId());
         String password = generatePassword();
-        userDomain.setPassword(password);
+        userDomain.setPassword(encodePassword(password));
         userDomain.setFirstName(firstName);
         userDomain.setLastName(lastName);
         userDomain.setEmail(email);
@@ -46,6 +49,10 @@ public class UserService implements IUserService {
         userRepository.save(userDomainMapper.toEntity(userDomain));
         LOGGER.info("Password is " + password);
         return userDomain;
+    }
+
+    private String encodePassword(String password) {
+        return bCryptPasswordEncoder.encode(password);
     }
 
     private String generatePassword() {
