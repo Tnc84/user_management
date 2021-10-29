@@ -2,14 +2,14 @@ package com.tnc.userManagement.repository.entity;
 
 import lombok.Getter;
 
-import static com.tnc.userManagement.repository.entity.AuthorityConstant.*;
+import static com.tnc.userManagement.repository.entity.AuthorityEnum.*;
 
 public enum RoleEnum {
 
-    ROLE_USER(USER_AUTHORITIES),
-    ROLE_ADMIN(ADMIN_AUTHORITIES),
-    ROLE_MANAGER(MANAGER_AUTHORITIES),
-    ROLE_OWNER(OWNER_AUTHORITIES);
+    ROLE_USER(String.valueOf(USER_AUTHORITIES)),
+    ROLE_ADMIN(String.valueOf(ADMIN_AUTHORITIES)),
+    ROLE_MANAGER(String.valueOf(MANAGER_AUTHORITIES)),
+    ROLE_OWNER(String.valueOf(OWNER_AUTHORITIES));
 
     @Getter
     private String[] authorities;
