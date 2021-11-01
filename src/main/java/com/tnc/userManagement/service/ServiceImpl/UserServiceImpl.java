@@ -1,7 +1,7 @@
 package com.tnc.userManagement.service.ServiceImpl;
 
 import com.tnc.userManagement.repository.UserRepository;
-import com.tnc.userManagement.service.model.RoleEnum;
+import com.tnc.userManagement.service.constant.RoleEnum;
 import com.tnc.userManagement.service.IUserService;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;
@@ -22,7 +22,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Qualifier("userDetailsService")
-public class UserService implements IUserService, UserDetailsService {
+public class UserServiceImpl implements IUserService, UserDetailsService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass()); //getClass = this class
 
     private final UserRepository userRepository;

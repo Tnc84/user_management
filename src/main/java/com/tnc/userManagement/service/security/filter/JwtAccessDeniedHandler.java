@@ -2,7 +2,7 @@ package com.tnc.userManagement.service.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tnc.userManagement.service.model.HttpResponse;
-import com.tnc.userManagement.service.security.constant.SecurityConstant;
+import com.tnc.userManagement.service.constant.SecurityConstant;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;

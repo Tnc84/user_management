@@ -1,4 +1,4 @@
-package com.tnc.userManagement.service.security.constant;
+package com.tnc.userManagement.service.constant;
 
 public class SecurityConstant {
     public static final long EXPIRATION_TIME = 432_000_000; // 5days in milliseconds

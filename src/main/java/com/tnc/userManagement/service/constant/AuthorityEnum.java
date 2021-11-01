@@ -1,4 +1,4 @@
-package com.tnc.userManagement.service.model;
+package com.tnc.userManagement.service.constant;
 
 public enum AuthorityEnum {
     USER_AUTHORITIES("user:read"),

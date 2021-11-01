@@ -1,6 +1,6 @@
 package com.tnc.userManagement.repository.entity;
 
-import com.tnc.userManagement.service.model.RoleEnum;
+import com.tnc.userManagement.service.constant.RoleEnum;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;

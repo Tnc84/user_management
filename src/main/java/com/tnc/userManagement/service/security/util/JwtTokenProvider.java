@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
-import static com.tnc.userManagement.service.security.constant.SecurityConstant.*;
+import static com.tnc.userManagement.service.constant.SecurityConstant.*;
 import static java.util.Arrays.stream;
 
 @Component

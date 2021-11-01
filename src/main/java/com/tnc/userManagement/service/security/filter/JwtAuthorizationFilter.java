@@ -1,9 +1,6 @@
 package com.tnc.userManagement.service.security.filter;
 
 import com.tnc.userManagement.service.security.util.JwtTokenProvider;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,8 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static com.tnc.userManagement.service.security.constant.SecurityConstant.OPTIONS_HTTP_METHOD;
-import static com.tnc.userManagement.service.security.constant.SecurityConstant.TOKEN_PREFIX;
+import static com.tnc.userManagement.service.constant.SecurityConstant.OPTIONS_HTTP_METHOD;
+import static com.tnc.userManagement.service.constant.SecurityConstant.TOKEN_PREFIX;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @Component

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.tnc.userManagement.service.security.constant.SecurityConstant.FORBIDDEN_MESSAGE;
+import static com.tnc.userManagement.service.constant.SecurityConstant.FORBIDDEN_MESSAGE;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
