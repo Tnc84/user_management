@@ -2,15 +2,17 @@ package com.tnc.userManagement.service.ServiceImpl;
 
 import com.tnc.userManagement.repository.UserRepository;
 import com.tnc.userManagement.repository.entity.RoleEnum;
-import com.tnc.userManagement.repository.entity.RoleEnum.*;
 import com.tnc.userManagement.service.IUserService;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.logging.log4j.spi.LoggerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,8 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class UserService implements IUserService {
+@Qualifier("userDetailsService")
+public class UserService implements IUserService, UserDetailsService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass()); //getClass = this class
 
     private final UserRepository userRepository;
@@ -87,5 +90,10 @@ public class UserService implements IUserService {
     @Override
     public List<UserDomain> getAll() {
         return userDomainMapper.toDomainList(userRepository.findAll());
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 }
