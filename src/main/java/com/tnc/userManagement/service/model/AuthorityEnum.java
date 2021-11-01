@@ -1,4 +1,4 @@
-package com.tnc.userManagement.repository.entity;
+package com.tnc.userManagement.service.model;
 
 public enum AuthorityEnum {
     USER_AUTHORITIES("user:read"),

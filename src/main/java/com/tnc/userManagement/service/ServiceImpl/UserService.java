@@ -1,7 +1,7 @@
 package com.tnc.userManagement.service.ServiceImpl;
 
 import com.tnc.userManagement.repository.UserRepository;
-import com.tnc.userManagement.repository.entity.RoleEnum;
+import com.tnc.userManagement.service.model.RoleEnum;
 import com.tnc.userManagement.service.IUserService;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;

@@ -1,8 +1,8 @@
-package com.tnc.userManagement.repository.entity;
+package com.tnc.userManagement.service.model;
 
 import lombok.Getter;
 
-import static com.tnc.userManagement.repository.entity.AuthorityEnum.*;
+import static com.tnc.userManagement.service.model.AuthorityEnum.*;
 
 public enum RoleEnum {
 
