@@ -5,11 +5,15 @@ import com.tnc.userManagement.service.constant.RoleEnum;
 import com.tnc.userManagement.service.IUserService;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;
+import com.tnc.userManagement.service.security.preventBrooteForceAttack.LoginAttemptService;
+import com.tnc.userManagement.service.security.util.JwtTokenProvider;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +32,12 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     private final UserRepository userRepository;
     private final UserDomainMapper userDomainMapper;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final LoginAttemptService loginAttemptService;
+    private final EmailService emailService;
 
 
     @Override
