@@ -8,6 +8,7 @@ import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import com.tnc.userManagement.service.exception.UserNotFoundException;
 import com.tnc.userManagement.service.exception.UsernameExistException;
 import com.tnc.userManagement.service.model.HttpResponse;
+import com.tnc.userManagement.service.model.UserDomain;
 import com.tnc.userManagement.service.security.UserPrincipal;
 import com.tnc.userManagement.service.validation.OnCreate;
 import com.tnc.userManagement.service.validation.OnUpdate;
@@ -18,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -36,15 +36,6 @@ public class UserController {
     private final IUserService userService;
     private final UserDTOMapper userDTOMapper;
 
-    @PostMapping("/login")
-    @Validated(OnCreate.class)
-    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
-        var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
-        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-        HttpHeaders jwtHeader = userService.getJwtHeader(userPrincipal);
-        return new ResponseEntity<>(userDTOMapper.toDTO(loginUser), jwtHeader, OK);
-    }
-
     @PostMapping("/register")
     @Validated(OnCreate.class)
     public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException, EmailNotFoundException {
@@ -52,17 +43,24 @@ public class UserController {
         return new ResponseEntity<>(user, OK);
     }
 
+    @PostMapping("/login")
+    @Validated(OnUpdate.class)
+    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
+        var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
+        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
+        HttpHeaders jwtHeader = userService.getJwtHeader(userPrincipal);
+        return new ResponseEntity<>(userDTOMapper.toDTO(loginUser), jwtHeader, OK);
+    }
+
     @PostMapping("/add")
-//    @Validated(OnCreate.class)
+    @Validated(OnCreate.class)
     public ResponseEntity<UserDTO> addNewUser(@RequestParam("firstName") String firstName,
                                               @RequestParam("lastName") String lastName,
-                                              @RequestParam("username") String username,
                                               @RequestParam("email") String email,
                                               @RequestParam("role") String role,
                                               @RequestParam("isActive") String isActive,
-                                              @RequestParam("isNotLocked") String isNotLocked,
-                                              @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws IOException {
-        var newUser = userService.addNewUserWithSpecificRole(firstName, lastName, email, role,
+                                              @RequestParam("isNotLocked") String isNotLocked) {
+        UserDomain newUser = userService.addNewUserWithSpecificRole(firstName, lastName, email, role,
                 Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
         return new ResponseEntity<>(userDTOMapper.toDTO(newUser), OK);
     }
@@ -72,12 +70,10 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(@RequestParam("currentUsername") String currentUsername,
                                               @RequestParam("firstName") String firstName,
                                               @RequestParam("lastName") String lastName,
-                                              @RequestParam("username") String username,
                                               @RequestParam("email") String email,
                                               @RequestParam("role") String role,
                                               @RequestParam("isActive") String isActive,
-                                              @RequestParam("isNotLocked") String isNotLocked,
-                                              @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, EmailNotFoundException {
+                                              @RequestParam("isNotLocked") String isNotLocked) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, EmailNotFoundException {
         var updateUser = userService.updateUser(currentUsername, firstName, lastName, email, role,
                 Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
         return new ResponseEntity<>(userDTOMapper.toDTO(updateUser), OK);

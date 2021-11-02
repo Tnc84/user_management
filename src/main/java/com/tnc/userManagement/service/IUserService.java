@@ -7,7 +7,6 @@ import com.tnc.userManagement.service.security.UserPrincipal;
 import org.springframework.http.HttpHeaders;
 
 import javax.mail.MessagingException;
-import java.io.IOException;
 import java.util.List;
 
 public interface IUserService {
@@ -20,8 +19,6 @@ public interface IUserService {
 
     UserDomain findByEmail(String email);
 
-    UserDomain addNewUserWithSpecificRole(String firstName, String laseName, String email, String role, boolean isActive, boolean isNotActive) throws IOException;
-
     UserDomain updateUser(String currentEmail, String newFirstName, String newLaseName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
 
     UserDomain get(Long id);
@@ -31,4 +28,6 @@ public interface IUserService {
     List<UserDomain> getAll();
 
     HttpHeaders getJwtHeader(UserPrincipal userPrincipal);
+
+    UserDomain addNewUserWithSpecificRole(String firstName, String lastName, String email, String role, boolean parseBoolean, boolean parseBoolean1);
 }
