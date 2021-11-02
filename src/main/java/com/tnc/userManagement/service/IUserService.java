@@ -3,6 +3,8 @@ package com.tnc.userManagement.service;
 import com.tnc.userManagement.service.exception.EmailExistException;
 import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import com.tnc.userManagement.service.model.UserDomain;
+import com.tnc.userManagement.service.security.UserPrincipal;
+import org.springframework.http.HttpHeaders;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -22,8 +24,11 @@ public interface IUserService {
 
     UserDomain updateUser(String currentEmail, String newFirstName, String newLaseName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
 
+    UserDomain get(Long id);
+
     void deleteUser(Long id);
 
     List<UserDomain> getAll();
 
+    HttpHeaders getJwtHeader(UserPrincipal userPrincipal);
 }

@@ -39,6 +39,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 @RequiredArgsConstructor
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements IUserService, UserDetailsService {
+
     private final Logger LOGGER = LoggerFactory.getLogger(getClass()); //getClass = this class
 
     private final UserRepository userRepository;
@@ -129,6 +130,16 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
+    public UserDomain get(Long id) {
+        return userDomainMapper.toDomain(userRepository.getById(id));
+    }
+
+    @Override
+    public UserDomain findByEmail(String email) {
+        return userDomainMapper.toDomain(userRepository.findUserByEmail(email));
+    }
+
+    @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
@@ -187,11 +198,6 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         } else {
             loginAttemptService.evictUserForLoginAttemptCache(userEmail.getEmail());
         }
-    }
-
-    @Override
-    public UserDomain findByEmail(String email) {
-        return userDomainMapper.toDomain(userRepository.findUserByEmail(email));
     }
 
     private String encodePassword(String password) {
