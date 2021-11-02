@@ -38,7 +38,7 @@ public class UserController {
 
     @PostMapping("/register")
     @Validated(OnCreate.class)
-    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) throws UserNotFoundException, EmailExistException, UsernameExistException, MessagingException, EmailNotFoundException {
+    public ResponseEntity<UserDTO> register(@RequestBody UserDTO userDTO) throws EmailExistException, MessagingException, EmailNotFoundException {
         var user = userDTOMapper.toDTO(userService.register(userDTO.firstName(), userDTO.lastName(), userDTO.email()));
         return new ResponseEntity<>(user, OK);
     }
@@ -53,17 +53,25 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    @Validated(OnCreate.class)
-    public ResponseEntity<UserDTO> addNewUser(@RequestParam("firstName") String firstName,
-                                              @RequestParam("lastName") String lastName,
-                                              @RequestParam("email") String email,
-                                              @RequestParam("role") String role,
-                                              @RequestParam("isActive") String isActive,
-                                              @RequestParam("isNotLocked") String isNotLocked) {
-        UserDomain newUser = userService.addNewUserWithSpecificRole(firstName, lastName, email, role,
-                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
-        return new ResponseEntity<>(userDTOMapper.toDTO(newUser), OK);
+    @Validated(OnCreate.class)///////////////////replace with RequestBody UserDTO userDto
+    public ResponseEntity<UserDTO> addNewUser(@RequestBody UserDTO userDTO) {
+        var newUser = userDTOMapper.toDTO(userService.addNewUserWithSpecificRole(userDTO.firstName(), userDTO.lastName(), userDTO.email(), userDTO.role(),
+                Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive()))));
+        return new ResponseEntity<>(newUser, OK);
     }
+
+//    @PostMapping("/add")
+//    @Validated(OnCreate.class)///////////////////replace with RequestBody UserDTO userDto
+//    public ResponseEntity<UserDTO> addNewUser(@RequestParam("firstName") String firstName,
+//                                              @RequestParam("lastName") String lastName,
+//                                              @RequestParam("email") String email,
+//                                              @RequestParam("role") String role,
+//                                              @RequestParam("isActive") String isActive,
+//                                              @RequestParam("isNotLocked") String isNotLocked) {
+//        UserDomain newUser = userService.addNewUserWithSpecificRole(firstName, lastName, email, role,
+//                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
+//        return new ResponseEntity<>(userDTOMapper.toDTO(newUser), OK);
+//    }
 
     @PutMapping("/update")
     @Validated(OnUpdate.class)

@@ -216,4 +216,9 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     private RoleEnum getRoleEnumName(String role) {
         return RoleEnum.valueOf(role.toUpperCase());
     }
+
+//        public UserPrincipal returnForLoginMethod(UserDomain userDomain) {
+//        var loginUser = userDomainMapper.toDomain(userRepository.findUserByEmail(userDomain.getEmail()));
+//        return new UserPrincipal(loginUser);
+//    }
 }
