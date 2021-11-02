@@ -26,6 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     }
 
     @Override
-    public UserDomain register(String firstName, String lastName, String email) throws EmailNotFoundException, EmailExistException {
+    public UserDomain register(String firstName, String lastName, String email) throws EmailNotFoundException, EmailExistException, MessagingException {
         validateNewUsernameAndEmail(EMPTY, email);
         var userDomain = new UserDomain();
         userDomain.setUserId(generateUserId());
@@ -77,6 +78,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         userDomain.setJoinDate(new Date());
         userRepository.save(userDomainMapper.toEntity(userDomain));
         LOGGER.info("Password is " + password);
+//        emailService.sendNewPasswordEmail(userDomain.getFirstName(), password, userDomain.getEmail());
         return userDomain;
     }
 
@@ -128,7 +130,19 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
 
     @Override
     public void deleteUser(Long id) {
+        userRepository.deleteById(id);
+    }
 
+    @Override
+    public void resetPassword(String email) throws MessagingException, EmailNotFoundException {
+        var userDomain = userDomainMapper.toDomain(userRepository.findUserByEmail(email));
+        if (userDomain == null) {
+            throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
+        }
+        String password = generatePassword();
+        userDomain.setPassword(encodePassword(password));
+        userRepository.save(userDomainMapper.toEntity(userDomain));
+        emailService.sendNewPasswordEmail(userDomain.getFirstName(), password, userDomain.getEmail());
     }
 
     @Override
