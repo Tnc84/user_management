@@ -1,4 +1,8 @@
 package com.tnc.userManagement.repository.entity;
+/**
+ * ##Represent a user
+ *
+ */
 
 import com.tnc.userManagement.service.constant.RoleEnum;
 import lombok.Getter;

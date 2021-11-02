@@ -11,10 +11,13 @@ public enum RoleEnum {
     ROLE_MANAGER(String.valueOf(MANAGER_AUTHORITIES)),
     ROLE_OWNER(String.valueOf(OWNER_AUTHORITIES));
 
-    @Getter
-    private String[] authorities;
+    private final String[] authorities;
 
     RoleEnum(String... authorities) {
         this.authorities = authorities;
+    }
+
+    public String[] getAuthorities() {
+        return authorities;
     }
 }

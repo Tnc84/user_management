@@ -2,7 +2,7 @@ package com.tnc.userManagement.service.constant;
 
 
 import lombok.Getter;
-////Must rename -> UserMessageEnum
+////Must be renamed -> UserMessageEnum
 public enum UserImplConstant {
     USERNAME_ALREADY_EXIST("Username already exist"),
     EMAIL_ALREADY_EXIST("Email already exist"),

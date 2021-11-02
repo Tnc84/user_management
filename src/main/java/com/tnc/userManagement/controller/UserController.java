@@ -3,6 +3,8 @@ package com.tnc.userManagement.controller;
 import com.tnc.userManagement.controller.dto.UserDTO;
 import com.tnc.userManagement.controller.dtoMapper.UserDTOMapper;
 import com.tnc.userManagement.service.IUserService;
+import com.tnc.userManagement.service.exception.EmailExistException;
+import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) throws EmailNotFoundException, EmailExistException {
         return ResponseEntity.ok(userDTOMapper.toDTO(userService.register(userDTO.firstName(), userDTO.lastName(), userDTO.email())));
     }
 }

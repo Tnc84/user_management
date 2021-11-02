@@ -1,19 +1,25 @@
 package com.tnc.userManagement.service.ServiceImpl;
 
 import com.tnc.userManagement.repository.UserRepository;
-import com.tnc.userManagement.service.constant.RoleEnum;
 import com.tnc.userManagement.service.IUserService;
+import com.tnc.userManagement.service.constant.RoleEnum;
+import com.tnc.userManagement.service.exception.EmailExistException;
+import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import com.tnc.userManagement.service.mapper.UserDomainMapper;
 import com.tnc.userManagement.service.model.UserDomain;
+import com.tnc.userManagement.service.security.UserPrincipal;
 import com.tnc.userManagement.service.security.preventBrooteForceAttack.LoginAttemptService;
 import com.tnc.userManagement.service.security.util.JwtTokenProvider;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,8 +29,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+import static com.tnc.userManagement.service.constant.RoleEnum.ROLE_USER;
+import static com.tnc.userManagement.service.constant.SecurityConstant.JWT_TOKEN_HEADER;
+import static com.tnc.userManagement.service.constant.UserImplConstant.*;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Qualifier("userDetailsService")
 public class UserServiceImpl implements IUserService, UserDetailsService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass()); //getClass = this class
@@ -39,14 +50,19 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
     private final LoginAttemptService loginAttemptService;
     private final EmailService emailService;
 
+    private void authenticate(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+    }
 
-    @Override
-    public UserDomain login(UserDomain userDomain) {
-        return null;
+    public HttpHeaders getJwtHeader(UserPrincipal userPrincipal) {
+        var header = new HttpHeaders();
+        header.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(userPrincipal));
+        return header;
     }
 
     @Override
-    public UserDomain register(String firstName, String lastName, String email) {
+    public UserDomain register(String firstName, String lastName, String email) throws EmailNotFoundException, EmailExistException {
+        validateNewUsernameAndEmail(EMPTY, email);
         var userDomain = new UserDomain();
         userDomain.setUserId(generateUserId());
         String password = generatePassword();
@@ -54,14 +70,114 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         userDomain.setFirstName(firstName);
         userDomain.setLastName(lastName);
         userDomain.setEmail(email);
-        userDomain.setRole(RoleEnum.ROLE_USER.name());
-        userDomain.setAuthorities(RoleEnum.ROLE_USER.getAuthorities());
+        userDomain.setRole(ROLE_USER.name());
+        userDomain.setAuthorities(ROLE_USER.getAuthorities());
         userDomain.setActive(true);
         userDomain.setNotLocked(true);
         userDomain.setJoinDate(new Date());
         userRepository.save(userDomainMapper.toEntity(userDomain));
         LOGGER.info("Password is " + password);
         return userDomain;
+    }
+
+    @Override
+    public UserDomain login(UserDomain userDomain) {
+        loadUserByUsername(userDomain.getEmail());
+        authenticate(userDomain.getEmail(), userDomain.getPassword());
+        return findByEmail(userDomain.getEmail());
+    }
+
+    @Override
+    public UserDomain addNewUserWithSpecificRole(String firstName, String lastName, String email, String role, boolean isActive, boolean isNotActive) {
+        var userDomain = new UserDomain();
+        userDomain.setUserId(generateUserId());
+        String password = generatePassword();
+        userDomain.setPassword(encodePassword(password));
+        userDomain.setFirstName(firstName);
+        userDomain.setLastName(lastName);
+        userDomain.setEmail(email);
+        userDomain.setRole(getRoleEnumName(role).name());
+        userDomain.setAuthorities(getRoleEnumName(role).getAuthorities());
+        userDomain.setActive(isActive);
+        userDomain.setNotLocked(isNotActive);
+        userDomain.setJoinDate(new Date());
+        userRepository.save(userDomainMapper.toEntity(userDomain));
+        LOGGER.info("Password is " + password);
+        return userDomain;
+    }
+
+    @Override
+    public UserDomain updateUser(String currentEmail, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException {
+        var userDomain = validateNewUsernameAndEmail(currentEmail, newEmail);
+        userDomain.setFirstName(newFirstName);
+        userDomain.setLastName(newLastName);
+        userDomain.setEmail(newEmail);
+        userDomain.setRole(getRoleEnumName(role).name());
+        userDomain.setAuthorities(getRoleEnumName(role).getAuthorities());
+        userDomain.setActive(isActive);
+        userDomain.setNotLocked(isNotActive);
+        userDomain.setJoinDate(new Date());
+        userRepository.save(userDomainMapper.toEntity(userDomain));
+        return userDomain;
+    }
+
+    @Override
+    public List<UserDomain> getAll() {
+        return userDomainMapper.toDomainList(userRepository.findAll());
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        var userEmail = userDomainMapper.toDomain(userRepository.findUserByEmail(email));
+        if (userEmail == null) {
+            LOGGER.error(NO_USER_FOUND_BY_USERNAME + email);
+            throw new UsernameNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
+        } else {
+            validateLoginAttempt(userEmail);
+            userEmail.setLastLoginDateDisplay(userEmail.getLastLoginDateDisplay());
+            userEmail.setLastLoginDate(new Date());
+            userRepository.save(userDomainMapper.toEntity(userEmail));
+            UserPrincipal userPrincipal = new UserPrincipal(userEmail);
+            LOGGER.info(FOUND_USER_BY_USERNAME + email);
+            return userPrincipal;
+        }
+    }
+
+    public UserDomain validateNewUsernameAndEmail(String currentEmail, String newEmail) throws EmailNotFoundException, EmailExistException {
+        var userByEmail = findByEmail(newEmail);
+        if (StringUtils.isNotBlank(currentEmail)) {
+            var notBlankEmail = findByEmail(currentEmail);
+            if (notBlankEmail == null) {
+                throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + currentEmail);
+            }
+            if (userByEmail != null && !notBlankEmail.getId().equals(userByEmail.getId())) {
+                throw new EmailExistException(EMAIL_ALREADY_EXIST + currentEmail);
+            }
+            return notBlankEmail;
+        } else {
+            if (userByEmail != null) {
+                throw new EmailExistException(String.valueOf(EMAIL_ALREADY_EXIST));
+            }
+            return null;
+        }
+    }
+
+    private void validateLoginAttempt(UserDomain userEmail) {
+        if (userEmail.isNotLocked()) {
+            userEmail.setNotLocked(!loginAttemptService.hasExceededMaxAttempts(userEmail.getEmail()));
+        } else {
+            loginAttemptService.evictUserForLoginAttemptCache(userEmail.getEmail());
+        }
+    }
+
+    @Override
+    public UserDomain findByEmail(String email) {
+        return userDomainMapper.toDomain(userRepository.findUserByEmail(email));
     }
 
     private String encodePassword(String password) {
@@ -77,33 +193,7 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         return RandomStringUtils.randomNumeric(10);
     }
 
-    @Override
-    public UserDomain findByEmail(String email) {
-        return null;
-    }
-
-    @Override
-    public UserDomain addNewUserWithSpecificRole(String firstName, String laseName, String email, String role, boolean isActive, boolean isNotActive) {
-        return null;
-    }
-
-    @Override
-    public UserDomain updateUser(String newFirstName, String newLaseName, String newEmail, String role, boolean isActive, boolean isNotActive) {
-        return null;
-    }
-
-    @Override
-    public void deleteUser(Long id) {
-
-    }
-
-    @Override
-    public List<UserDomain> getAll() {
-        return userDomainMapper.toDomainList(userRepository.findAll());
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
+    private RoleEnum getRoleEnumName(String role) {
+        return RoleEnum.valueOf(role.toUpperCase());
     }
 }
