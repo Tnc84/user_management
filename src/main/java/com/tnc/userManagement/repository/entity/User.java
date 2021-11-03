@@ -11,6 +11,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
@@ -34,7 +35,7 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
     @Transient
-    private String[] authorities;
+    private String[] authorities = new String[0];
     private boolean isActive;
     private boolean isNotLocked;
 }

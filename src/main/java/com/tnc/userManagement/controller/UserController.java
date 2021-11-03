@@ -44,7 +44,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    @Validated(OnUpdate.class)
+//    @Validated(OnUpdate.class)
     public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
         var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
@@ -59,19 +59,6 @@ public class UserController {
                 Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive()))));
         return new ResponseEntity<>(newUser, OK);
     }
-
-//    @PostMapping("/add")
-//    @Validated(OnCreate.class)///////////////////replace with RequestBody UserDTO userDto
-//    public ResponseEntity<UserDTO> addNewUser(@RequestParam("firstName") String firstName,
-//                                              @RequestParam("lastName") String lastName,
-//                                              @RequestParam("email") String email,
-//                                              @RequestParam("role") String role,
-//                                              @RequestParam("isActive") String isActive,
-//                                              @RequestParam("isNotLocked") String isNotLocked) {
-//        UserDomain newUser = userService.addNewUserWithSpecificRole(firstName, lastName, email, role,
-//                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
-//        return new ResponseEntity<>(userDTOMapper.toDTO(newUser), OK);
-//    }
 
     @PutMapping("/update")
     @Validated(OnUpdate.class)
