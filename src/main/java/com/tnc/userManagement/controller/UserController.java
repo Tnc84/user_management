@@ -8,7 +8,6 @@ import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import com.tnc.userManagement.service.exception.UserNotFoundException;
 import com.tnc.userManagement.service.exception.UsernameExistException;
 import com.tnc.userManagement.service.model.HttpResponse;
-import com.tnc.userManagement.service.model.UserDomain;
 import com.tnc.userManagement.service.security.UserPrincipal;
 import com.tnc.userManagement.service.validation.OnCreate;
 import com.tnc.userManagement.service.validation.OnUpdate;
@@ -29,7 +28,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = {"/", "/user"})
+@RequestMapping(path = {"/users"})
 public class UserController {
     public static final String EMAIL_SENT = "An email with a new password was sent to: ";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully. ";
@@ -44,7 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-//    @Validated(OnUpdate.class)
+    @Validated(OnUpdate.class)
     public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
         var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);
@@ -53,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    @Validated(OnCreate.class)///////////////////replace with RequestBody UserDTO userDto
+    @Validated(OnCreate.class)
     public ResponseEntity<UserDTO> addNewUser(@RequestBody UserDTO userDTO) {
         var newUser = userDTOMapper.toDTO(userService.addNewUserWithSpecificRole(userDTO.firstName(), userDTO.lastName(), userDTO.email(), userDTO.role(),
                 Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive()))));
@@ -62,15 +61,9 @@ public class UserController {
 
     @PutMapping("/update")
     @Validated(OnUpdate.class)
-    public ResponseEntity<UserDTO> updateUser(@RequestParam("currentUsername") String currentUsername,
-                                              @RequestParam("firstName") String firstName,
-                                              @RequestParam("lastName") String lastName,
-                                              @RequestParam("email") String email,
-                                              @RequestParam("role") String role,
-                                              @RequestParam("isActive") String isActive,
-                                              @RequestParam("isNotLocked") String isNotLocked) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, EmailNotFoundException {
-        var updateUser = userService.updateUser(currentUsername, firstName, lastName, email, role,
-                Boolean.parseBoolean(isNotLocked), Boolean.parseBoolean(isActive));
+    public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, EmailNotFoundException {
+        var updateUser = userService.updateUser(userDTO.id(), userDTO.firstName(), userDTO.lastName(), userDTO.email(), userDTO.role(),
+                Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive())));
         return new ResponseEntity<>(userDTOMapper.toDTO(updateUser), OK);
     }
 

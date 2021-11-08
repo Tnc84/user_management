@@ -1,7 +1,7 @@
 package com.tnc.userManagement.repository.entity;
 /**
- * ##Represent a user
- *
+ * User
+ * @author tnc
  */
 
 import com.tnc.userManagement.service.constant.RoleEnum;
@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
 
 @Getter
@@ -20,9 +19,15 @@ import java.util.Date;
 @Entity(name = "users")
 public class User implements Serializable {
 
+    /**
+     * Long id
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    /**
+     * String userId
+     */
     private String userId;
     private String firstName;
     private String lastName;
@@ -32,8 +37,10 @@ public class User implements Serializable {
     private Date lastLoginDate;
     private Date lastLoginDateDisplay;
     private Date joinDate;
+
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
+
     @Transient
     private String[] authorities = new String[0];
     private boolean isActive;

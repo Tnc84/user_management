@@ -109,9 +109,26 @@ public class UserServiceImpl implements IUserService, UserDetailsService {
         return userDomain;
     }
 
+//    @Override
+//    public UserDomain updateUser(Long id, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException {
+//        var userDomain = new UserDomain();
+////        var userDomain = validateNewUsernameAndEmail(EMPTY, newEmail);
+//        userDomain.setId(id);
+//        userDomain.setFirstName(newFirstName);
+//        userDomain.setLastName(newLastName);
+//        userDomain.setEmail(newEmail);
+//        userDomain.setRole(getRoleEnumName(role).name());
+//        userDomain.setAuthorities(getRoleEnumName(role).getAuthorities());
+//        userDomain.setActive(isActive);
+//        userDomain.setNotLocked(isNotActive);
+//        userDomain.setJoinDate(new Date());
+//        userRepository.save(userDomainMapper.toEntity(userDomain));
+//        return userDomain;
+//    }
     @Override
-    public UserDomain updateUser(String currentEmail, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException {
-        var userDomain = validateNewUsernameAndEmail(currentEmail, newEmail);
+    public UserDomain updateUser(Long id, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException {
+        var userDomain = addNewUserWithSpecificRole(newFirstName, newLastName, newEmail, role, isActive, isNotActive);
+        userDomain.setId(id);
         userDomain.setFirstName(newFirstName);
         userDomain.setLastName(newLastName);
         userDomain.setEmail(newEmail);

@@ -19,11 +19,15 @@ public interface IUserService {
 
     UserDomain findByEmail(String email);
 
-    UserDomain updateUser(String currentEmail, String newFirstName, String newLaseName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
-
     UserDomain get(Long id);
 
     void deleteUser(Long id);
+
+//    UserDomain updateUser(String currentEmail, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
+
+//    UserDomain updateUser(String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
+
+    UserDomain updateUser(Long id, String newFirstName, String newLastName, String newEmail, String role, boolean isActive, boolean isNotActive) throws EmailNotFoundException, EmailExistException;
 
     List<UserDomain> getAll();
 
