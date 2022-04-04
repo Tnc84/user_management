@@ -2,10 +2,16 @@ package com.tnc.userManagement.controller.dto;
 
 import com.tnc.userManagement.service.validation.OnCreate;
 import com.tnc.userManagement.service.validation.OnUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.*;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 @Validated
 public record UserDTO(
@@ -15,21 +21,9 @@ public record UserDTO(
         @Positive
         Long id,
         String userId,
-        @NotNull
-        @NotBlank
-        @Size(min = 3, max = 50, message = "This field must have between 3 and 50 chars")
         String firstName,
-        @NotNull
-        @NotBlank
-        @Size(min = 3, max = 50, message = "This field must have between 3 and 50 chars")
         String lastName,
-        @NotNull
-        @NotBlank
-        @Email
         String email,
-        @NotNull
-        @NotBlank
-        @Size(min = 10, max = 10)
         String phone,
         String password,
         Date lastLoginDate,

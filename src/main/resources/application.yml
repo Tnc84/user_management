@@ -1,7 +1,7 @@
 jwt:
   secret: "password"
 server:
-  port : 8091
+  port : 8088
 spring:
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
@@ -14,3 +14,9 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+okta:
+  oauth2:
+    issuer: https://dev-11394084.okta.com
+    redirect-uri: http://localhost:8088/authorization-code/callback
+    client-id: 0oa49rtj4pyYz0U2a5d7
+    client:secret: rAVeZi5LRS8VJ5UHMp28gpeniBdqcMdol7SejqYl

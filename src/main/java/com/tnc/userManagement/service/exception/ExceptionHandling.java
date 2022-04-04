@@ -1,6 +1,5 @@
 package com.tnc.userManagement.service.exception;
 
-import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.tnc.userManagement.service.model.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +7,6 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,30 +31,30 @@ public class ExceptionHandling implements ErrorController {
     public static final String NOT_ENOUGH_PERMISSION = "You do not have enough permission.";
     public static final String ERROR_PATH = "/error";
 
-    @ExceptionHandler(DisabledException.class)
+//    @ExceptionHandler(DisabledException.class)
     public ResponseEntity<HttpResponse> accountDisabledException(){
         return createHttpResponse(BAD_REQUEST, ACCOUNT_DISABLED);
     }
 
-    @ExceptionHandler(BadCredentialsException.class)
+//    @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<HttpResponse> badCredentialsException(){
         return createHttpResponse(BAD_REQUEST, INCORRECT_CREDENTIALS);
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
+//    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<HttpResponse> accessDeniedException(){
         return createHttpResponse(FORBIDDEN, NOT_ENOUGH_PERMISSION);
     }
 
-    @ExceptionHandler(LockedException.class)
+//    @ExceptionHandler(LockedException.class)
     public ResponseEntity<HttpResponse> lockedException(){
         return createHttpResponse(UNAUTHORIZED, ACCOUNT_LOCKED);
     }
 
-    @ExceptionHandler(TokenExpiredException.class)
-    public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception){
-        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
-    }
+//    @ExceptionHandler(TokenExpiredException.class)
+//    public ResponseEntity<HttpResponse> tokenExpiredException(TokenExpiredException exception){
+//        return createHttpResponse(UNAUTHORIZED, exception.getMessage());
+//    }
 
     @ExceptionHandler(EmailExistException.class)
     public ResponseEntity<HttpResponse> emailExistException(EmailExistException exception){

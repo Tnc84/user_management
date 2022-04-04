@@ -8,14 +8,13 @@ import com.tnc.userManagement.service.exception.EmailNotFoundException;
 import com.tnc.userManagement.service.exception.UserNotFoundException;
 import com.tnc.userManagement.service.exception.UsernameExistException;
 import com.tnc.userManagement.service.model.HttpResponse;
-import com.tnc.userManagement.service.security.UserPrincipal;
 import com.tnc.userManagement.service.validation.OnCreate;
 import com.tnc.userManagement.service.validation.OnUpdate;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = {"/users"})
+@RequestMapping(path = {"/user"})
 public class UserController {
     public static final String EMAIL_SENT = "An email with a new password was sent to: ";
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully. ";
@@ -42,19 +41,22 @@ public class UserController {
         return new ResponseEntity<>(user, OK);
     }
 
-    @PostMapping("/login")
-    @Validated(OnUpdate.class)
-    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
-        var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
-        UserPrincipal userPrincipal = new UserPrincipal(loginUser);
-        HttpHeaders jwtHeader = userService.getJwtHeader(userPrincipal);
-        return new ResponseEntity<>(userDTOMapper.toDTO(loginUser), jwtHeader, OK);
+    @GetMapping("/hello")
+    public String login(@AuthenticationPrincipal OidcUser user) {
+        return "hello";
     }
+
+//    @PostMapping("/login")
+//    @Validated(OnUpdate.class)
+//    public ResponseEntity<UserDTO> login(@RequestBody UserDTO userDTO) {
+//        var loginUser = userService.login(userDTOMapper.toDomain(userDTO));
+//        return new ResponseEntity<>(userDTOMapper.toDTO(loginUser), OK);
+//    }
 
     @PostMapping("/add")
     @Validated(OnCreate.class)
     public ResponseEntity<UserDTO> addNewUser(@RequestBody UserDTO userDTO) {
-        var newUser = userDTOMapper.toDTO(userService.addNewUserWithSpecificRole(userDTO.firstName(), userDTO.lastName(), userDTO.email(), userDTO.role(),
+        var newUser = userDTOMapper.toDTO(userService.addNewUserWithSpecificRole(userDTO.firstName(), userDTO.lastName(), userDTO.phone(), userDTO.email(), userDTO.role(),
                 Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive()))));
         return new ResponseEntity<>(newUser, OK);
     }
@@ -62,7 +64,7 @@ public class UserController {
     @PutMapping("/update")
     @Validated(OnUpdate.class)
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO) throws UserNotFoundException, EmailExistException, IOException, UsernameExistException, EmailNotFoundException {
-        var updateUser = userService.updateUser(userDTO.id(), userDTO.firstName(), userDTO.lastName(), userDTO.email(), userDTO.role(),
+        var updateUser = userService.updateUser(userDTO.id(), userDTO.firstName(), userDTO.phone(), userDTO.lastName(), userDTO.email(), userDTO.role(),
                 Boolean.parseBoolean(String.valueOf(userDTO.isNotLocked())), Boolean.parseBoolean(String.valueOf(userDTO.isActive())));
         return new ResponseEntity<>(userDTOMapper.toDTO(updateUser), OK);
     }
@@ -86,7 +88,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAuthority('user:delete')")
+//    @PreAuthorize("hasAuthority('user:delete')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("id") long id) {
         userService.deleteUser(id);
         return response(NO_CONTENT, USER_DELETED_SUCCESSFULLY);

@@ -7,20 +7,22 @@ package com.tnc.userManagement.repository.entity;
 import com.tnc.userManagement.service.constant.RoleEnum;
 import com.tnc.userManagement.service.validation.OnCreate;
 import com.tnc.userManagement.service.validation.OnUpdate;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Date;
 
+@Builder
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
+//@RequiredArgsConstructor
 @Entity(name = "users")
+@NoArgsConstructor
 public class User implements Serializable {
 
     /**
@@ -39,19 +41,23 @@ public class User implements Serializable {
     @NotBlank(message = "This field cannot be empty")
     @NotNull(message = "Must not be null")
     @NotEmpty(message = "This field must not be empty.")
-    @Length(message = "The name must be between 5 and 50 chars.", min = 5, max = 50)
-    @Pattern(message = "Must contain only letters.", regexp = "(?<=\\s|^)[a-zA-Z]*(?=[.,;:]?\\s|$)")
+    @Length(message = "The name must be between 5 and 50 chars.", min = 3, max = 50)
+    @Pattern(message = "Name should contain only letters.", regexp = "(?<=\\s|^)[a-zA-Z]*(?=[.,;:]?\\s|$)")
     private String firstName;
     @NotBlank(message = "This field cannot be empty")
     @NotNull(message = "Must not be null")
     @NotEmpty(message = "This field must not be empty.")
-    @Length(message = "The name must be between 5 and 50 chars.", min = 5, max = 50)
-    @Pattern(message = "Must contain only letters.", regexp = "(?<=\\s|^)[a-zA-Z]*(?=[.,;:]?\\s|$)")
+    @Length(message = "The name must be between 5 and 50 chars.", min = 3, max = 50)
+    @Pattern(message = "Name should contain only letters.", regexp = "(?<=\\s|^)[a-zA-Z]*(?=[.,;:]?\\s|$)")
     private String lastName;
     @Email
     @Column(nullable = false, unique = true)
     private String email;
-    @Pattern(message = "Must contains only digits.", regexp = "\"^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$\"")
+//    @Pattern(message = "Must contains only digits.", regexp = "\"^(\\\\+\\\\d{1,3}( )?)?((\\\\(\\\\d{1,3}\\\\))|\\\\d{1,3})[- .]?\\\\d{3,4}[- .]?\\\\d{4}$\"")
+    @Pattern(message = "Phone_no should be exact 10 characters.", regexp="(^$|[0-9]{10})")
+//    @Range(min = 10,max= 10, message = "phone_no should be exact 10 characters.")
+//    @NotNull
+//    @NotEmpty
     private String phone;
     private String password;
     private Date lastLoginDate;
